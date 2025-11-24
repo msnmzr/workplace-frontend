@@ -1,85 +1,48 @@
-# NextAdmin - Next.js Admin Dashboard Template and Components
+# Hum Leopards
 
-**NextAdmin** is a Free, open-source Next.js admin dashboard toolkit featuring 200+ UI components and templates that come with pre-built elements, components, pages, high-quality design, integrations, and much more to help you create powerful admin dashboards with ease.
+Hum Leopards Portal is a web application designed to manage and display employee information for Leopards organization. It provides a centralized platform for managing employee profiles, leaves, performance records, and other HR-related data with centralized user authentication using Active Directory.
+
+The portal is built using Next.js for the frontend and Laravel 12 for the backend.
 
 
-[![nextjs admin template](https://cdn.pimjo.com/nextadmin-2.png)](https://nextadmin.co/)
+## Installation & Setup
 
-
-**NextAdmin** provides you with a diverse set of dashboard UI components, elements, examples and pages necessary for creating top-notch admin panels or dashboards with **powerful** features and integrations. Whether you are working on a complex web application or a basic website, **NextAdmin** has got you covered.
-
-### [✨ Visit Website](https://nextadmin.co/)
-### [🚀 Live Demo](https://demo.nextadmin.co/)
-### [📖 Docs](https://docs.nextadmin.co/)
-
-By leveraging the latest features of **Next.js 14** and key functionalities like **server-side rendering (SSR)**, **static site generation (SSG)**, and seamless **API route integration**, **NextAdmin** ensures optimal performance. With the added benefits of **React 18 advancements** and **TypeScript** reliability, **NextAdmin** is the ultimate choice to kickstart your **Next.js** project efficiently.
-
-## Installation
-
-1. Download/fork/clone the repo and Once you're in the correct directory, it's time to install all the necessary dependencies. You can do this by typing the following command:
-
+Navigate to project root:
 ```
+cd workplace-frontend
 npm install
 ```
-If you're using **Yarn** as your package manager, the command will be:
 
+
+Add .env.local with API URL:
 ```
-yarn install
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
 ```
 
-2. Okay, you're almost there. Now all you need to do is start the development server. If you're using **npm**, the command is:
+Start the Next.js development server:
 
 ```
 npm run dev
 ```
-And if you're using **Yarn**, it's:
 
-```
-yarn dev
-```
 
-And voila! You're now ready to start developing. **Happy coding**!
+## Authentication
+Employees log in using Active Directory credentials.
 
-## Highlighted Features
-**200+ Next.js Dashboard Ul Components and Templates** - includes a variety of prebuilt **Ul elements, components, pages, and examples** crafted with a high-quality design.
-Additionally, features seamless **essential integrations and extensive functionalities**.
+Laravel validates AD credentials and fetches additional data from the local users table.
 
-- A library of over **200** professional dashboard UI components and elements.
-- Five distinctive dashboard variations, catering to diverse use-cases.
-- A comprehensive set of essential dashboard and admin pages.
-- More than **45** **Next.js** files, ready for use.
-- Styling facilitated by **Tailwind CSS** files.
-- A design that resonates premium quality and high aesthetics.
-- A handy UI kit with assets.
-- Over ten web apps complete with examples.
-- Support for both **dark mode** and **light mode**.
-- Essential integrations including - Authentication (**NextAuth**), Database (**Postgres** with **Prisma**), and Search (**Algolia**).
-- Detailed and user-friendly documentation.
-- Customizable plugins and add-ons.
-- **TypeScript** compatibility.
-- Plus, much more!
+Next.js stores authentication token securely and protects dashboard routes.
 
-All these features and more make **NextAdmin** a robust, well-rounded solution for all your dashboard development needs.
+## Security Considerations
 
-## Update Logs
+JWT/Sanctum token-based authentication.
 
-### Version 1.2.1 - [Mar 20, 2025]
-- Fix Peer dependency issues and NextConfig warning.
-- Updated apexcharts and react-apexhcarts to the latest version.
+Active Directory ensures company-wide secure login.
 
-### Version 1.2.0 - Major Upgrade and UI Improvements - [Jan 27, 2025]
+Role-based access control for admin and employee functionalities.
 
-- Upgraded to Next.js v15 and updated dependencies
-- API integration with loading skeleton for tables and charts.
-- Improved code structure for better readability.
-- Rebuilt components like dropdown, sidebar, and all ui-elements using accessibility practices.
-- Using search-params to store dropdown selection and refetch data.
-- Semantic markups, better separation of concerns and more.
+CSRF protection via Laravel middleware.
 
-### Version 1.1.0
-- Updated Dependencies
-- Removed Unused Integrations
-- Optimized App
+## Contact / Support
 
-### Version 1.0
-- Initial Release - [May 13, 2024]
+For any issues or assistance with the portal, please contact the HR or IT team.
