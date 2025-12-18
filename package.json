@@ -1,5 +1,5 @@
 {
-  "name": "free-nextadmin-nextjs",
+  "name": "free-Hum Leopards-nextjs",
   "version": "1.2.1",
   "private": true,
   "scripts": {
@@ -14,6 +14,7 @@
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "flatpickr": "^4.6.13",
+    "js-cookie": "^3.0.5",
     "jsvectormap": "^1.6.0",
     "next": "^16.0.3",
     "next-themes": "^0.4.4",
@@ -24,6 +25,7 @@
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^22",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
