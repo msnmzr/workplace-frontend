@@ -17,7 +17,7 @@ const DatePickerTwo = () => {
 
   return (
     <div>
-      <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
+      <label className="mb-3 block text-body-sm font-medium text-dark dark:text-primary">
         Select date
       </label>
       <div className="relative">

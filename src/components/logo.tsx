@@ -16,7 +16,7 @@ export function Logo() {
       />
 
       <Image
-        src="/images/logo/LCS-Main-Logo-300x128.png"
+        src="/images/logo/LCS-Main-Logo-300x128-white.png"
         width={300}
         height={128}
         className="hidden dark:block"

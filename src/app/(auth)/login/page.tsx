@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
-import InputGroup from '@/components/FormElements/InputGroup';
+import React, { useState, useEffect } from "react";
+import Cookies from "js-cookie";
+import InputGroup from "@/components/FormElements/InputGroup";
 import { Checkbox } from "@/components/FormElements/checkbox";
 // import Signin from "@/components/Auth/Signin";
 import Image from "next/image";
 import Link from "next/link";
 import { EmailIcon, PasswordIcon } from "@/assets/icons";
 
-
 // NOTE: This MUST match the cookie name in your proxy.ts file!
 // --- safe endpoint: use NEXT_PUBLIC_API_URL if defined, otherwise fall back to relative /api/login
-const AUTH_TOKEN_COOKIE_NAME = 'auth_token';
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '') : '';
-const LARAVEL_LOGIN_ENDPOINT = API_BASE ? `${API_BASE}/login` : '/login';
-
+const AUTH_TOKEN_COOKIE_NAME = "auth_token";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL
+  ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")
+  : "";
+const LARAVEL_LOGIN_ENDPOINT = API_BASE ? `${API_BASE}/login` : "/login";
 
 // --- Component ---
 const LoginPage = () => {
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [data, setData] = useState({
@@ -39,17 +39,19 @@ const LoginPage = () => {
     // Check if the auth cookie exists and redirect immediately
     if (Cookies.get(AUTH_TOKEN_COOKIE_NAME)) {
       setTimeout(() => {
-        window.location.href = '/dashboard';
+        window.location.href = "/dashboard";
       }, 100);
     }
   }, []);
 
   // --- Utility function to set the authentication cookie ---
   const setAuthCookie = (token: string) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Set cookie for 7 days, available to the whole domain (path: '/')
-      Cookies.set(AUTH_TOKEN_COOKIE_NAME, token, { expires: 7, path: '/' });
-      console.log(`[Cookie Set] Auth token set successfully: ${token.substring(0, 10)}...`);
+      Cookies.set(AUTH_TOKEN_COOKIE_NAME, token, { expires: 7, path: "/" });
+      console.log(
+        `[Cookie Set] Auth token set successfully: ${token.substring(0, 10)}...`,
+      );
     }
   };
 
@@ -61,21 +63,23 @@ const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       // Call the Laravel API using the values from `data`
       const response = await fetch(LARAVEL_LOGIN_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username: data.username, password: data.password }),
+        body: JSON.stringify({
+          username: data.username,
+          password: data.password,
+        }),
       });
 
       // Handle non-successful API responses
       if (!response.ok) {
-
         let message = `Login failed. Please try again after sometime.)`;
 
         try {
@@ -87,7 +91,7 @@ const LoginPage = () => {
         } catch (_) { }
 
         if (response.status === 401 || response.status === 403) {
-          setError('Invalid Username/Password.');
+          setError("Invalid Username/Password.");
         } else {
           setError(message);
         }
@@ -99,7 +103,9 @@ const LoginPage = () => {
       const respData = await response.json();
 
       if (!respData.token) {
-        setError('Login successful, but no authentication token received from the server.');
+        setError(
+          "Login successful, but no authentication token received from the server.",
+        );
         setLoading(false);
         return;
       }
@@ -119,36 +125,42 @@ const LoginPage = () => {
 
       try {
         if (user) {
-          console.log('[User Info] Persisting user info to localStorage', user);
-          // Save minimal user info only
           const safeUser = {
-            name: user.emp_name || user.emp_name || user.emp_code || user.emp_email?.split?.('@')?.[0] || null,
-            email: user.emp_email || (user.user && user.user.emp_email) || null,
-            img: user.avatar || user.picture || user.profile_picture || null,
+            ...user,
+            name:
+              user.emp_name ||
+              user.name ||
+              user.emp_code ||
+              user.emp_email?.split?.("@")?.[0] ||
+              null,
+            email: user.emp_email || user.email || (user.user && user.user.emp_email) || null,
+            img: user.emp_image || user.image || user.profile_picture || null,
+            permissions: user.permissions || [],
+            roles: user.roles || [],
           };
-          localStorage.setItem('auth_user', JSON.stringify(safeUser));
+          localStorage.setItem("auth_user", JSON.stringify(safeUser));
         } else {
           // clear any stale stored user
-          localStorage.removeItem('auth_user');
+          localStorage.removeItem("auth_user");
         }
       } catch (err) {
         // ignore localStorage errors (private modes)
-        console.warn('Could not persist user to localStorage', err);
+        console.warn("Could not persist user to localStorage", err);
       }
       // ============================================================
 
       // Redirect to dashboard
-      window.location.href = '/dashboard';
-
+      window.location.href = "/dashboard";
     } catch (err: any) {
-      console.error('Network or API call error:', err);
-      setError('A network error occurred. Could not connect to the authentication server.');
+      console.error("Network or API call error:", err);
+      setError(
+        "A network error occurred. Could not connect to the authentication server.",
+      );
       setLoading(false);
     }
   };
 
   return (
-
     <div className="flex flex-wrap items-center">
       <div className="w-full xl:w-1/2">
         <div className="w-full p-4 sm:p-12.5 xl:p-15">
@@ -199,7 +211,7 @@ const LoginPage = () => {
 
               <Link
                 href="/auth/forgot-password"
-                className="hover:text-primary dark:text-white dark:hover:text-primary"
+                className="hover:text-primary dark:text-primary dark:hover:text-primary"
               >
                 Forgot Password?
               </Link>
@@ -221,7 +233,7 @@ const LoginPage = () => {
       </div>
 
       <div className="hidden w-full xl:block xl:w-1/2">
-        <div className="custom-gradient-1 overflow-hidden px-12.5 pt-12.5 ">
+        <div className="custom-gradient-1 overflow-hidden px-12.5 pt-12.5">
           <Link className="mb-10 inline-block" href="/">
             <Image
               className="hidden dark:block"
@@ -238,16 +250,17 @@ const LoginPage = () => {
               height={32}
             />
           </Link>
-          <p className="mb-3 text-xl font-medium text-dark dark:text-white">
+          <p className="mb-3 text-xl font-medium text-dark dark:text-primary">
             Sign in to your account
           </p>
 
-          <h1 className="mb-4 text-2xl font-bold text-dark dark:text-white sm:text-heading-3">
+          <h1 className="mb-4 text-2xl font-bold text-dark dark:text-primary sm:text-heading-3">
             Welcome Back!
           </h1>
 
           <p className="w-full max-w-[375px] font-medium text-dark-4 dark:text-dark-6">
-            Please sign in to your account by completing the necessary fields below
+            Please sign in to your account by completing the necessary fields
+            below
           </p>
 
           <div className="mt-31">
@@ -263,6 +276,6 @@ const LoginPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

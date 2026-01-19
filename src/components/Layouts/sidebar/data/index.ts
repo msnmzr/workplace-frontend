@@ -1,105 +1,81 @@
 import * as Icons from "../icons";
 
-export const NAV_DATA = [
+export interface NavItem {
+  title: string;
+  url?: string;
+  icon: any;
+  items: NavItem[];
+}
+
+export interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+export const NAV_DATA: NavSection[] = [
   {
     label: "",
     items: [
       {
         title: "Dashboard",
+        url: "/dashboard",
         icon: Icons.HomeIcon,
-        items: [
-          {
-            title: "eCommerce",
-            url: "/",
-          },
-        ],
-      },
-      {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Icons.Calendar,
         items: [],
       },
       {
-        title: "Profile",
-        url: "/profile",
-        icon: Icons.User,
+        title: "Users",
+        url: "/admin/users",
+        icon: Icons.User, // Using generic User icon, or could find a specific one
         items: [],
       },
       {
-        title: "Forms",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Form Elements",
-            url: "/forms/form-elements",
-          },
-          {
-            title: "Form Layout",
-            url: "/forms/form-layout",
-          },
-        ],
+        title: "Roles",
+        url: "/admin/roles",
+        icon: Icons.UserGroup, // Using Authentication icon as placeholder for Roles
+        items: [],
       },
       {
-        title: "Tables",
-        url: "/tables",
-        icon: Icons.Table,
-        items: [
-          {
-            title: "Tables",
-            url: "/tables",
-          },
-        ],
+        title: "Permissions",
+        url: "/admin/permissions",
+        icon: Icons.Permissions, // Using Alphabet/Text icon for permissions
+        items: [],
       },
       {
-        title: "Pages",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Settings",
-            url: "/pages/settings",
-          },
-        ],
+        title: "Applications",
+        url: "/admin/applications",
+        icon: Icons.RectangleStack, // Using PieChart icon as placeholder
+        items: [],
+      },
+      {
+        title: "News",
+        url: "/admin/news",
+        icon: Icons.News,
+        items: [],
       },
     ],
   },
   {
-    label: "OTHERS",
+    label: "",
     items: [
       {
-        title: "Charts",
-        icon: Icons.PieChart,
+        title: "Settings",
+        url: "/admin/settings",
+        icon: Icons.Setting,
         items: [
           {
-            title: "Basic Chart",
-            url: "/charts/basic-chart",
-          },
-        ],
-      },
-      {
-        title: "UI Elements",
-        icon: Icons.FourCircle,
-        items: [
-          {
-            title: "Alerts",
-            url: "/ui-elements/alerts",
+            title: "Pages",
+            url: "/admin/settings/pages",
+            icon: Icons.Setting,
+            items: [],
           },
           {
-            title: "Buttons",
-            url: "/ui-elements/buttons",
-          },
+            title: "Menus",
+            url: "/admin/settings/menus",
+            icon: Icons.Setting,
+            items: [],
+          }
         ],
-      },
-      {
-        title: "Authentication",
-        icon: Icons.Authentication,
-        items: [
-          {
-            title: "Sign In",
-            url: "/auth/sign-in",
-          },
-        ],
-      },
-    ],
-  },
+      }
+    ]
+  }
 ];

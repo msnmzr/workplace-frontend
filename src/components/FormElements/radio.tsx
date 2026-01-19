@@ -22,7 +22,7 @@ export function RadioInput({
     <div>
       <label
         htmlFor={id}
-        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-white"
+        className="flex cursor-pointer select-none items-center text-body-sm font-medium text-dark dark:text-primary"
       >
         <div className="relative">
           <input

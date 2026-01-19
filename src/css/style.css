@@ -363,7 +363,7 @@ span.flatpickr-weekday,
 }
 
 .data-table-common .datatable-dropdown label {
-  @apply inline-flex items-center gap-2.5 font-medium capitalize text-dark dark:text-white;
+  @apply inline-flex items-center gap-2.5 font-medium capitalize text-dark dark:text-primary;
 }
 
 .datatable-table .datatable-sorter {
@@ -397,7 +397,7 @@ span.flatpickr-weekday,
 }
 
 .data-table-one .datatable-table > tbody > tr > td:first-child {
-  @apply text-primary dark:text-white;
+  @apply text-primary dark:text-primary;
 }
 
 .data-table-common .datatable-table > tbody > tr > td {

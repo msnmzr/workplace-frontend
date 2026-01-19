@@ -39,11 +39,11 @@ export default function SignIn() {
                   height={32}
                 />
               </Link>
-              <p className="mb-3 text-xl font-medium text-dark dark:text-white">
+              <p className="mb-3 text-xl font-medium text-dark dark:text-primary">
                 Sign in to your account
               </p>
 
-              <h1 className="mb-4 text-2xl font-bold text-dark dark:text-white sm:text-heading-3">
+              <h1 className="mb-4 text-2xl font-bold text-dark dark:text-primary sm:text-heading-3">
                 Welcome Back!
               </h1>
 

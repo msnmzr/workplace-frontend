@@ -9,19 +9,16 @@ import { NAV_DATA } from "./data";
 import { ArrowLeftIcon, ChevronUp } from "./icons";
 import { MenuItem } from "./menu-item";
 import { useSidebarContext } from "./sidebar-context";
+import { AuthService } from "@/services/auth.service";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const isSuperAdmin = AuthService.isSuperAdmin();
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
-
-    // Uncomment the following line to enable multiple expanded items
-    // setExpandedItems((prev) =>
-    //   prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
-    // );
   };
 
   useEffect(() => {
@@ -33,8 +30,6 @@ export function Sidebar() {
             if (!expandedItems.includes(item.title)) {
               toggleExpanded(item.title);
             }
-
-            // Break the loop
             return true;
           }
         });
@@ -90,13 +85,19 @@ export function Sidebar() {
           <div className="custom-scrollbar flex-1 overflow-y-auto pr-3">
             {NAV_DATA.map((section) => (
               <div key={section.label} className="mb-6">
-                <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-dark-6">
+                <h2 className="mb-5 text-sm font-medium text-dark-4 dark:text-primary">
                   {section.label}
                 </h2>
 
                 <nav role="navigation" aria-label={section.label}>
                   <ul className="space-y-2">
-                    {section.items.map((item) => (
+                    {section.items.filter(item => {
+                      // Hide admin management routes from non-admins
+                      if (item.url?.startsWith('/admin') && !isSuperAdmin) {
+                        return false;
+                      }
+                      return true;
+                    }).map((item) => (
                       <li key={item.title}>
                         {item.items.length ? (
                           <div>
@@ -132,8 +133,8 @@ export function Sidebar() {
                                   <li key={subItem.title} role="none">
                                     <MenuItem
                                       as="link"
-                                      href={subItem.url}
-                                      isActive={pathname === subItem.url}
+                                      href={subItem.url || "#"}
+                                      isActive={subItem.url ? pathname === subItem.url : false}
                                     >
                                       <span>{subItem.title}</span>
                                     </MenuItem>

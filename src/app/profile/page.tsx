@@ -15,7 +15,7 @@ export default function Page() {
   });
 
   const handleChange = (e: any) => {
-    if (e.target.name === "profilePhoto" ) {
+    if (e.target.name === "profilePhoto") {
       const file = e.target?.files[0];
 
       setData({
@@ -107,25 +107,25 @@ export default function Page() {
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="mb-1 text-heading-6 font-bold text-dark dark:text-white">
+            <h3 className="mb-1 text-heading-6 font-bold text-dark dark:text-primary">
               {data?.name}
             </h3>
             <p className="font-medium">Ui/Ux Designer</p>
             <div className="mx-auto mb-5.5 mt-5 grid max-w-[370px] grid-cols-3 rounded-[5px] border border-stroke py-[9px] shadow-1 dark:border-dark-3 dark:bg-dark-2 dark:shadow-card">
               <div className="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-dark-3 xsm:flex-row">
-                <span className="font-medium text-dark dark:text-white">
+                <span className="font-medium text-dark dark:text-primary">
                   259
                 </span>
                 <span className="text-body-sm">Posts</span>
               </div>
               <div className="flex flex-col items-center justify-center gap-1 border-r border-stroke px-4 dark:border-dark-3 xsm:flex-row">
-                <span className="font-medium text-dark dark:text-white">
+                <span className="font-medium text-dark dark:text-primary">
                   129K
                 </span>
                 <span className="text-body-sm">Followers</span>
               </div>
               <div className="flex flex-col items-center justify-center gap-1 px-4 xsm:flex-row">
-                <span className="font-medium text-dark dark:text-white">
+                <span className="font-medium text-dark dark:text-primary">
                   2K
                 </span>
                 <span className="text-body-sm-sm">Following</span>
@@ -133,7 +133,7 @@ export default function Page() {
             </div>
 
             <div className="mx-auto max-w-[720px]">
-              <h4 className="font-medium text-dark dark:text-white">
+              <h4 className="font-medium text-dark dark:text-primary">
                 About Me
               </h4>
               <p className="mt-4">

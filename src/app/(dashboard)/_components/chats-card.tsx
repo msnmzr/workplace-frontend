@@ -10,7 +10,7 @@ export async function ChatsCard() {
 
   return (
     <div className="col-span-12 rounded-[10px] bg-white py-6 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-4">
-      <h2 className="mb-5.5 px-7.5 text-body-2xlg font-bold text-dark dark:text-white">
+      <h2 className="mb-5.5 px-7.5 text-body-2xlg font-bold text-dark dark:text-primary">
         Chats
       </h2>
 
@@ -39,7 +39,7 @@ export async function ChatsCard() {
               </div>
 
               <div className="relative flex-grow">
-                <h3 className="font-medium text-dark dark:text-white">
+                <h3 className="font-medium text-dark dark:text-primary">
                   {chat.name}
                 </h3>
 
