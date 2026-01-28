@@ -8,6 +8,7 @@ import DataTableInfo from "@/components/Tables/DataTableInfo";
 import { Application, ApplicationsService } from "@/services/applications.service";
 import { useEffect, useState } from "react";
 import { getAssetUrl } from "@/lib/utils";
+import Loader from "@/components/common/Loader";
 
 export default function ApplicationsPage() {
     const [applications, setApplications] = useState<Application[]>([]);
@@ -74,6 +75,44 @@ export default function ApplicationsPage() {
 
     const totalPages = Math.ceil(totalEntries / perPage);
 
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const data = new FormData();
+            data.append("name", formData.name || "");
+            data.append("slug", formData.slug || "");
+            data.append("url", formData.url || "");
+            data.append("description", formData.description || "");
+            data.append("active", formData.active ? "1" : "0");
+
+            if (formData.icon_file) {
+                data.append("icon", formData.icon_file);
+            }
+
+            if (isEditing && selectedApp) {
+                await ApplicationsService.updateApplication(selectedApp.id, data);
+            } else {
+                await ApplicationsService.createApplication(data);
+            }
+            setIsModalOpen(false);
+            fetchApplications();
+        } catch (error) {
+            console.error("Failed to save application", error);
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (confirm("Are you sure you want to delete this application?")) {
+            try {
+                await ApplicationsService.deleteApplication(id);
+                fetchApplications();
+            } catch (error) {
+                console.error("Failed to delete application", error);
+            }
+        }
+    };
+
     // Modal Handlers
     const openCreateModal = () => {
         setIsEditing(false);
@@ -103,43 +142,6 @@ export default function ApplicationsPage() {
             active: app.active,
         });
         setIsModalOpen(true);
-    };
-
-    const handleDelete = async (id: number) => {
-        if (confirm("Are you sure you want to delete this application?")) {
-            try {
-                await ApplicationsService.deleteApplication(id);
-                fetchApplications();
-            } catch (error) {
-                console.error("Failed to delete application", error);
-            }
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const data = new FormData();
-            data.append("name", formData.name || "");
-            data.append("slug", formData.slug || "");
-            data.append("url", formData.url || "");
-            data.append("description", formData.description || "");
-            data.append("active", formData.active ? "1" : "0");
-
-            if (formData.icon_file) {
-                data.append("icon", formData.icon_file);
-            }
-
-            if (isEditing && selectedApp) {
-                await ApplicationsService.updateApplication(selectedApp.id, data);
-            } else {
-                await ApplicationsService.createApplication(data);
-            }
-            setIsModalOpen(false);
-            fetchApplications();
-        } catch (error) {
-            console.error("Failed to save application", error);
-        }
     };
 
     return (
@@ -183,7 +185,7 @@ export default function ApplicationsPage() {
                         </div>
 
                         {isLoading ? (
-                            <div className="p-4 text-center">Loading...</div>
+                            <Loader />
                         ) : (
                             applications.map((app, index) => (
                                 <div

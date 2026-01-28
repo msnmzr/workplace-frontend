@@ -4,39 +4,33 @@ import React, { useEffect, useRef, useState } from "react";
 interface Option {
   value: string;
   text: string;
-  selected: boolean;
-  element?: HTMLElement;
 }
 
-interface DropdownProps {
+interface MultiSelectProps {
   id: string;
+  label?: string;
+  placeholder?: string;
+  options: Option[];
+  defaultValues?: string[]; // IDs as strings
+  onChange: (selectedValues: string[]) => void;
 }
 
-const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
-  const [options, setOptions] = useState<Option[]>([]);
-  const [selected, setSelected] = useState<number[]>([]);
+const MultiSelect: React.FC<MultiSelectProps> = ({
+  id,
+  label = "Multiselect Dropdown",
+  placeholder = "Select an option",
+  options,
+  defaultValues = [],
+  onChange,
+}) => {
+  const [selected, setSelected] = useState<string[]>(defaultValues);
   const [show, setShow] = useState(false);
   const dropdownRef = useRef<any>(null);
   const trigger = useRef<any>(null);
 
   useEffect(() => {
-    const loadOptions = () => {
-      const select = document.getElementById(id) as HTMLSelectElement | null;
-      if (select) {
-        const newOptions: Option[] = [];
-        for (let i = 0; i < select.options.length; i++) {
-          newOptions.push({
-            value: select.options[i].value,
-            text: select.options[i].innerText,
-            selected: select.options[i].hasAttribute("selected"),
-          });
-        }
-        setOptions(newOptions);
-      }
-    };
-
-    loadOptions();
-  }, [id]);
+    setSelected(defaultValues);
+  }, [defaultValues]);
 
   const open = () => {
     setShow(true);
@@ -46,37 +40,23 @@ const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
     return show === true;
   };
 
-  const select = (index: number, event: React.MouseEvent) => {
-    const newOptions = [...options];
+  const select = (value: string) => {
+    let newSelected = [...selected];
 
-    if (!newOptions[index].selected) {
-      newOptions[index].selected = true;
-      newOptions[index].element = event.currentTarget as HTMLElement;
-      setSelected([...selected, index]);
+    if (newSelected.includes(value)) {
+      newSelected = newSelected.filter((item) => item !== value);
     } else {
-      const selectedIndex = selected.indexOf(index);
-      if (selectedIndex !== -1) {
-        newOptions[index].selected = false;
-        setSelected(selected.filter((i) => i !== index));
-      }
+      newSelected.push(value);
     }
 
-    setOptions(newOptions);
+    setSelected(newSelected);
+    onChange(newSelected);
   };
 
-  const remove = (index: number) => {
-    const newOptions = [...options];
-    const selectedIndex = selected.indexOf(index);
-
-    if (selectedIndex !== -1) {
-      newOptions[index].selected = false;
-      setSelected(selected.filter((i) => i !== index));
-      setOptions(newOptions);
-    }
-  };
-
-  const selectedValues = () => {
-    return selected.map((option) => options[option].value);
+  const remove = (value: string) => {
+    const newSelected = selected.filter((item) => item !== value);
+    setSelected(newSelected);
+    onChange(newSelected);
   };
 
   useEffect(() => {
@@ -97,62 +77,60 @@ const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
   return (
     <div className="relative z-50">
       <label className="mb-3 block text-body-sm font-medium text-dark dark:text-primary">
-        Multiselect Dropdown
+        {label}
       </label>
       <div>
-        <select className="hidden" id={id}>
-          <option value="1">Design</option>
-          <option value="2">Development</option>
-          <option value="3">Option 4</option>
-          <option value="4">Option 5</option>
-        </select>
-
         <div className="flex flex-col items-center">
-          <input name="values" type="hidden" defaultValue={selectedValues()} />
           <div className="relative z-20 inline-block w-full">
             <div className="relative flex flex-col items-center">
               <div ref={trigger} onClick={open} className="w-full">
                 <div className="mb-2 flex rounded-[7px] border-[1.5px] border-stroke py-[9px] pl-3 pr-3 outline-none transition focus:border-primary active:border-primary dark:border-dark-3 dark:bg-dark-2">
                   <div className="flex flex-auto flex-wrap gap-3">
-                    {selected.map((index) => (
-                      <div
-                        key={index}
-                        className="flex items-center justify-center rounded-[5px] border-[.5px] border-stroke bg-gray-2 px-2.5 py-[3px] text-body-sm font-medium dark:border-dark-3 dark:bg-dark"
-                      >
-                        <div className="max-w-full flex-initial">
-                          {options[index].text}
-                        </div>
-                        <div className="flex flex-auto flex-row-reverse">
-                          <div
-                            onClick={() => remove(index)}
-                            className="cursor-pointer pl-1 hover:text-red"
-                          >
-                            <svg
-                              className="fill-current"
-                              role="button"
-                              width="12"
-                              height="12"
-                              viewBox="0 0 12 12"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
+                    {selected.map((value) => {
+                      const option = options.find(o => o.value === value);
+                      return (
+                        <div
+                          key={value}
+                          className="flex items-center justify-center rounded-[5px] border-[.5px] border-stroke bg-gray-2 px-2.5 py-[3px] text-body-sm font-medium dark:border-dark-3 dark:bg-dark"
+                        >
+                          <div className="max-w-full flex-initial">
+                            {option ? option.text : value}
+                          </div>
+                          <div className="flex flex-auto flex-row-reverse">
+                            <div
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                remove(value);
+                              }}
+                              className="cursor-pointer pl-1 hover:text-red"
                             >
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M9.35355 3.35355C9.54882 3.15829 9.54882 2.84171 9.35355 2.64645C9.15829 2.45118 8.84171 2.45118 8.64645 2.64645L6 5.29289L3.35355 2.64645C3.15829 2.45118 2.84171 2.45118 2.64645 2.64645C2.45118 2.84171 2.45118 3.15829 2.64645 3.35355L5.29289 6L2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L6 6.70711L8.64645 9.35355C8.84171 9.54882 9.15829 9.54882 9.35355 9.35355C9.54882 9.15829 9.54882 8.84171 9.35355 8.64645L6.70711 6L9.35355 3.35355Z"
-                                fill=""
-                              />
-                            </svg>
+                              <svg
+                                className="fill-current"
+                                role="button"
+                                width="12"
+                                height="12"
+                                viewBox="0 0 12 12"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  clipRule="evenodd"
+                                  d="M9.35355 3.35355C9.54882 3.15829 9.54882 2.84171 9.35355 2.64645C9.15829 2.45118 8.84171 2.45118 8.64645 2.64645L6 5.29289L3.35355 2.64645C3.15829 2.45118 2.84171 2.45118 2.64645 2.64645C2.45118 2.84171 2.45118 3.15829 2.64645 3.35355L5.29289 6L2.64645 8.64645C2.45118 8.84171 2.45118 9.15829 2.64645 9.35355C2.84171 9.54882 3.15829 9.54882 3.35355 9.35355L6 6.70711L8.64645 9.35355C8.84171 9.54882 9.15829 9.54882 9.35355 9.35355C9.54882 9.15829 9.54882 8.84171 9.35355 8.64645L6.70711 6L9.35355 3.35355Z"
+                                  fill=""
+                                />
+                              </svg>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                     {selected.length === 0 && (
                       <div className="flex-1">
                         <input
-                          placeholder="Select an option"
+                          placeholder={placeholder}
                           className="h-full w-full appearance-none bg-transparent p-1 px-2 text-dark-5 outline-none dark:text-dark-6"
-                          defaultValue={selectedValues()}
+                          readOnly
                         />
                       </div>
                     )}
@@ -191,14 +169,14 @@ const MultiSelect: React.FC<DropdownProps> = ({ id }) => {
                   onBlur={() => setShow(false)}
                 >
                   <div className="flex w-full flex-col">
-                    {options.map((option, index) => (
-                      <div key={index}>
+                    {options.map((option) => (
+                      <div key={option.value}>
                         <div
                           className="w-full cursor-pointer rounded-t border-b border-stroke hover:bg-primary/5 dark:border-dark-3"
-                          onClick={(event) => select(index, event)}
+                          onClick={() => select(option.value)}
                         >
                           <div
-                            className={`relative flex w-full items-center border-l-2 border-transparent p-2 pl-2 ${option.selected ? "border-primary" : ""
+                            className={`relative flex w-full items-center border-l-2 border-transparent p-2 pl-2 ${selected.includes(option.value) ? "border-primary" : ""
                               }`}
                           >
                             <div className="flex w-full items-center">

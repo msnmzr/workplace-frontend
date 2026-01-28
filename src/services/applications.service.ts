@@ -1,4 +1,5 @@
 import API from "@/lib/api";
+import { API_URLS } from "@/config/api-urls";
 
 export interface Application {
     id: number;
@@ -15,20 +16,20 @@ export interface Application {
 
 export const ApplicationsService = {
     getApplications: async () => {
-        const response = await API.get("/applications");
+        const response = await API.get(API_URLS.APPLICATIONS.LIST);
         const data = response.data?.data || response.data;
         return Array.isArray(data) ? data : [];
     },
 
     createApplication: async (data: FormData | Partial<Application>) => {
-        const response = await API.post("/applications", data, {
+        const response = await API.post(API_URLS.APPLICATIONS.CREATE, data, {
             headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : {},
         });
         return response.data;
     },
 
     getApplication: async (id: number) => {
-        const response = await API.get(`/applications/${id}`);
+        const response = await API.get(API_URLS.APPLICATIONS.DETAILS(id));
         return response.data?.data || response.data;
     },
 
@@ -48,7 +49,7 @@ export const ApplicationsService = {
 
         const response = await API({
             method: method,
-            url: `/applications/${id}`,
+            url: API_URLS.APPLICATIONS.UPDATE(id),
             data: payload,
             headers: payload instanceof FormData ? { "Content-Type": "multipart/form-data" } : {},
         });
@@ -56,7 +57,7 @@ export const ApplicationsService = {
     },
 
     deleteApplication: async (id: number) => {
-        const response = await API.delete(`/applications/${id}`);
+        const response = await API.delete(API_URLS.APPLICATIONS.DELETE(id));
         return response.data;
     },
 };

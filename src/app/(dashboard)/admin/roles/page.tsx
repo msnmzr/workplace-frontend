@@ -9,6 +9,7 @@ import { useClientTable } from "@/hooks/useClientTable";
 import { RbacService } from "@/services/rbac.service";
 import { Permission, Role } from "@/types/rbac";
 import { useEffect, useState } from "react";
+import Loader from "@/components/common/Loader";
 
 export default function RolesPage() {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -109,7 +110,7 @@ export default function RolesPage() {
     });
   };
 
-  if (loading && roles.length === 0) return <div>Loading...</div>;
+
 
   return (
     <>
@@ -165,47 +166,55 @@ export default function RolesPage() {
               </div>
             </div>
 
-            {paginatedRoles.map((role, index) => (
-              <div
-                className={`grid grid-cols-4 sm:grid-cols-5 ${paginatedRoles.indexOf(role) === paginatedRoles.length - 1
-                  ? ""
-                  : "border-b border-stroke dark:border-dark-3"
-                  }`}
-                key={role.id}
-              >
-                <div className="flex items-center p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">
-                    {(currentPage - 1) * perPage + index + 1}
-                  </p>
+            {loading ? (
+              <Loader />
+            ) : (
+              paginatedRoles.map((role, index) => (
+                <div
+                  className={`grid grid-cols-4 sm:grid-cols-5 ${paginatedRoles.indexOf(role) === paginatedRoles.length - 1
+                    ? ""
+                    : "border-b border-stroke dark:border-dark-3"
+                    }`}
+                  key={role.id}
+                >
+                  <div className="flex items-center p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">
+                      {(currentPage - 1) * perPage + index + 1}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-start p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">{role.id}</p>
+                  </div>
+                  <div className="flex items-center justify-center p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">{role.name}</p>
+                  </div>
+                  <div className="flex items-center justify-center p-2.5">
+                    <p className="text-sm leading-tight text-dark dark:text-primary">
+                      {role.permissions?.length || 0} Permissions
+                    </p>
+                  </div>
+                  <div className="hidden items-center justify-center p-2.5 sm:flex">
+                    <ActionDropdown
+                      actions={[
+                        {
+                          label: "Edit",
+                          onClick: () => openEditModal(role),
+                        },
+                        {
+                          label: "Delete",
+                          onClick: () => handleDelete(role.id),
+                          variant: "danger",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center justify-start p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">{role.id}</p>
-                </div>
-                <div className="flex items-center justify-center p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">{role.name}</p>
-                </div>
-                <div className="flex items-center justify-center p-2.5">
-                  <p className="text-sm leading-tight text-dark dark:text-primary">
-                    {role.permissions?.length || 0} Permissions
-                  </p>
-                </div>
-                <div className="hidden items-center justify-center p-2.5 sm:flex">
-                  <ActionDropdown
-                    actions={[
-                      {
-                        label: "Edit",
-                        onClick: () => openEditModal(role),
-                      },
-                      {
-                        label: "Delete",
-                        onClick: () => handleDelete(role.id),
-                        variant: "danger",
-                      },
-                    ]}
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+            )}
+
+            {!loading && paginatedRoles.length === 0 && (
+              <div className="p-4 text-center text-gray-500">No roles found.</div>
+            )}
           </div>
 
           <div className="dark:border-strokedark mt-4 flex items-center justify-between border-t border-stroke">

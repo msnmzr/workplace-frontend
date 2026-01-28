@@ -1,7 +1,7 @@
 "use client";
 
-import ActionDropdown from "@/components/Dropdowns/ActionDropdown";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
+import ActionDropdown from "@/components/Dropdowns/ActionDropdown";
 import Pagination from "@/components/Pagination/Pagination";
 import DataTableControls from "@/components/Tables/DataTableControls";
 import DataTableInfo from "@/components/Tables/DataTableInfo";
@@ -9,6 +9,7 @@ import { useClientTable } from "@/hooks/useClientTable";
 import { RbacService } from "@/services/rbac.service";
 import { Permission } from "@/types/rbac";
 import { useEffect, useState } from "react";
+import Loader from "@/components/common/Loader";
 
 export default function PermissionsPage() {
   const [permissions, setPermissions] = useState<Permission[]>([]);
@@ -20,13 +21,17 @@ export default function PermissionsPage() {
   const [formData, setFormData] = useState({ name: "" });
 
   const fetchPermissions = async () => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       const data = await RbacService.getPermissions();
+
       setPermissions(data);
     } catch (error) {
+
       console.error("Failed to fetch permissions:", error);
     } finally {
+
       setLoading(false);
     }
   };
@@ -91,7 +96,7 @@ export default function PermissionsPage() {
     setIsModalOpen(true);
   };
 
-  if (loading && permissions.length === 0) return <div>Loading...</div>;
+
 
   return (
     <>
@@ -134,45 +139,53 @@ export default function PermissionsPage() {
               </div>
             </div>
 
-            {paginatedPermissions.map((permission, index) => (
-              <div
-                className={`grid grid-cols-3 sm:grid-cols-4 ${paginatedPermissions.indexOf(permission) ===
-                  paginatedPermissions.length - 1
-                  ? ""
-                  : "border-b border-stroke dark:border-dark-3"
-                  }`}
-                key={permission.id}
-              >
-                <div className="flex items-center p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">
-                    {(currentPage - 1) * perPage + index + 1}
-                  </p>
+            {loading ? (
+              <Loader />
+            ) : (
+              paginatedPermissions.map((permission, index) => (
+                <div
+                  className={`grid grid-cols-3 sm:grid-cols-4 ${paginatedPermissions.indexOf(permission) ===
+                    paginatedPermissions.length - 1
+                    ? ""
+                    : "border-b border-stroke dark:border-dark-3"
+                    }`}
+                  key={permission.id}
+                >
+                  <div className="flex items-center p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">
+                      {(currentPage - 1) * perPage + index + 1}
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">{permission.name}</p>
+                  </div>
+                  <div className="flex items-center justify-center p-2.5">
+                    <p className="text-dark leading-tight dark:text-primary">
+                      {permission.guard_name}
+                    </p>
+                  </div>
+                  <div className="hidden items-center justify-center p-2.5 sm:flex">
+                    <ActionDropdown
+                      actions={[
+                        {
+                          label: "Edit",
+                          onClick: () => openEditModal(permission),
+                        },
+                        {
+                          label: "Delete",
+                          onClick: () => handleDelete(permission.id),
+                          variant: "danger",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
-                <div className="flex items-center justify-center p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">{permission.name}</p>
-                </div>
-                <div className="flex items-center justify-center p-2.5">
-                  <p className="text-dark leading-tight dark:text-primary">
-                    {permission.guard_name}
-                  </p>
-                </div>
-                <div className="hidden items-center justify-center p-2.5 sm:flex">
-                  <ActionDropdown
-                    actions={[
-                      {
-                        label: "Edit",
-                        onClick: () => openEditModal(permission),
-                      },
-                      {
-                        label: "Delete",
-                        onClick: () => handleDelete(permission.id),
-                        variant: "danger",
-                      },
-                    ]}
-                  />
-                </div>
-              </div>
-            ))}
+              ))
+            )}
+
+            {!loading && paginatedPermissions.length === 0 && (
+              <div className="p-4 text-center text-gray-500">No permissions found.</div>
+            )}
           </div>
 
           <div className="dark:border-strokedark mt-4 flex items-center justify-between border-t border-stroke">

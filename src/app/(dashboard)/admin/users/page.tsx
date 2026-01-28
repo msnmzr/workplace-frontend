@@ -3,6 +3,7 @@
 import ActionDropdown from "@/components/Dropdowns/ActionDropdown";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import API from "@/lib/api";
+import { API_URLS } from "@/config/api-urls";
 import { RbacService } from "@/services/rbac.service";
 import { Permission, Role, User } from "@/types/rbac";
 import Pagination from "@/components/Pagination/Pagination";
@@ -12,6 +13,7 @@ import Image from "next/image";
 import { useEffect, useState, useCallback } from "react";
 // Debounce helper
 import { debounce } from "@/utils/debounce";
+import Loader from "@/components/common/Loader";
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -48,13 +50,13 @@ export default function UsersPage() {
         search: searchQuery,
       });
 
-      const endpoint = `/employees?${query.toString()}`;
+      const endpoint = `${API_URLS.EMPLOYEES.LIST}?${query.toString()}`;
 
       try {
         response = await API.get(endpoint);
       } catch (e) {
-        console.warn(`Failed to fetch ${endpoint}, trying /users fallback...`);
-        response = await API.get(`/users?${query.toString()}`);
+        console.warn(`Failed to fetch ${endpoint}, trying fallback...`);
+        response = await API.get(`${API_URLS.EMPLOYEES.LIST}?${query.toString()}`);
       }
 
       const responseData = response.data;
@@ -188,7 +190,7 @@ export default function UsersPage() {
     }
   };
 
-  if (loading && users.length === 0) return <div>Loading...</div>;
+
 
   return (
     <>
@@ -235,53 +237,61 @@ export default function UsersPage() {
             </div>
           </div>
 
-          {users.slice(0, perPage).map((user, index) => (
-            <div
-              className={`grid grid-cols-4 sm:grid-cols-5 ${index === users.slice(0, perPage).length - 1
-                ? ""
-                : "border-b border-stroke dark:border-dark-3"
-                }`}
-              key={user.emp_id}
-            >
-              <div className="flex items-center p-2.5">
-                <p className="text-dark leading-tight dark:text-primary">
-                  {(currentPage - 1) * perPage + index + 1}
-                </p>
-              </div>
+          {loading ? (
+            <Loader />
+          ) : (
+            users.slice(0, perPage).map((user, index) => (
+              <div
+                className={`grid grid-cols-4 sm:grid-cols-5 ${index === users.slice(0, perPage).length - 1
+                  ? ""
+                  : "border-b border-stroke dark:border-dark-3"
+                  }`}
+                key={user.emp_id}
+              >
+                <div className="flex items-center p-2.5">
+                  <p className="text-dark leading-tight dark:text-primary">
+                    {(currentPage - 1) * perPage + index + 1}
+                  </p>
+                </div>
 
-              <div className="flex items-center gap-3 p-2.5">
-                <p className="text-dark leading-tight dark:text-primary">{user.emp_name}</p>
-              </div>
-              <div className="flex items-center justify-center p-2.5">
-                <p className="text-dark leading-tight dark:text-primary">{user.emp_email}</p>
-              </div>
-              <div className="flex items-center justify-center p-2.5">
-                <div className="flex flex-wrap justify-center gap-1">
-                  {user.roles?.map((role) => (
-                    <span
-                      key={role.id}
-                      className="inline-block rounded-full bg-black/50 font-semibold px-2 py-1 text-xs font-medium leading-none text-primary dark:text-black dark:bg-primary"
-                    >
-                      {role.name}
-                    </span>
-                  ))}
-                  {(!user.roles || user.roles.length === 0) && (
-                    <span className="text-sm leading-tight text-gray-500 dark:text-primary">-</span>
-                  )}
+                <div className="flex items-center gap-3 p-2.5">
+                  <p className="text-dark leading-tight dark:text-primary">{user.emp_name}</p>
+                </div>
+                <div className="flex items-center justify-center p-2.5">
+                  <p className="text-dark leading-tight dark:text-primary">{user.emp_email}</p>
+                </div>
+                <div className="flex items-center justify-center p-2.5">
+                  <div className="flex flex-wrap justify-center gap-1">
+                    {user.roles?.map((role) => (
+                      <span
+                        key={role.id}
+                        className="inline-block rounded-full bg-black/50 font-semibold px-2 py-1 text-xs font-medium leading-none text-primary dark:text-black dark:bg-primary"
+                      >
+                        {role.name}
+                      </span>
+                    ))}
+                    {(!user.roles || user.roles.length === 0) && (
+                      <span className="text-sm leading-tight text-gray-500 dark:text-primary">-</span>
+                    )}
+                  </div>
+                </div>
+                <div className="hidden items-center justify-center p-2.5 sm:flex">
+                  <ActionDropdown
+                    actions={[
+                      {
+                        label: "Manage Access",
+                        onClick: () => openManageAccessModal(user),
+                      },
+                    ]}
+                  />
                 </div>
               </div>
-              <div className="hidden items-center justify-center p-2.5 sm:flex">
-                <ActionDropdown
-                  actions={[
-                    {
-                      label: "Manage Access",
-                      onClick: () => openManageAccessModal(user),
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-          ))}
+            ))
+          )}
+
+          {!loading && users.length === 0 && (
+            <div className="p-4 text-center text-gray-500">No users found.</div>
+          )}
         </div>
 
         <div className="dark:border-strokedark dark:border-primary mt-4 flex items-center justify-between border-t border-stroke">

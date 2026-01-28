@@ -38,7 +38,7 @@ const ACCOUNTS = [
 export function SocialAccounts() {
   return (
     <div className="mt-4.5">
-      <h4 className="mb-3.5 font-medium text-dark dark:text-white">
+      <h4 className="mb-3.5 font-medium text-dark dark:text-primary">
         Follow me on
       </h4>
       <div className="flex items-center justify-center gap-3.5">

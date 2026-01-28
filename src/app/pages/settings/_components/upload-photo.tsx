@@ -17,7 +17,7 @@ export function UploadPhotoForm() {
           />
 
           <div>
-            <span className="mb-1.5 font-medium text-dark dark:text-white">
+            <span className="mb-1.5 font-medium text-dark dark:text-primary">
               Edit your photo
             </span>
             <span className="flex gap-3">
@@ -61,7 +61,7 @@ export function UploadPhotoForm() {
 
         <div className="flex justify-end gap-3">
           <button
-            className="flex justify-center rounded-lg border border-stroke px-6 py-[7px] font-medium text-dark hover:shadow-1 dark:border-dark-3 dark:text-white"
+            className="flex justify-center rounded-lg border border-stroke px-6 py-[7px] font-medium text-dark hover:shadow-1 dark:border-dark-3 dark:text-primary"
             type="button"
           >
             Cancel
